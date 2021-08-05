@@ -27,7 +27,7 @@ def pod_install(bundle_command)
   if status.to_i.zero?
     puts("#{pod_install_command} 执行成功".green)
     open_xcode_project
-  elsif stdout.include?('CocoaPods could not find compatible versions for pod')
+  elsif stdout.include?('could not find') || stdout.include?('Unable to find')
     puts("开始执行 #{pod_install_repo_update_command}")
     stdout, stderr, status = ShellUtils.execute(pod_install_repo_update_command)
     if status.to_i.zero?
@@ -48,14 +48,14 @@ def bundle_process
 
   if !File.exist?(gemfile_path)
     bundle_command = ''
-  else
-    bundle_install_command = 'bundle install'
-    stdout, stderr, status = ShellUtils.execute(bundle_install_command)
-    unless status.to_i.zero?
-      puts("#{bundle_install_command} 执行失败\n#{stderr}".red)
-      # bundle install 失败的话，直接退出，手动处理报错
-      exit(status.zero?)
-    end
+  # else
+  #   bundle_install_command = 'bundle install'
+  #   stdout, stderr, status = ShellUtils.execute(bundle_install_command)
+  #   unless status.to_i.zero?
+  #     puts("#{bundle_install_command} 执行失败\n#{stderr}".red)
+  #     # bundle install 失败的话，直接退出，手动处理报错
+  #     exit(status.zero?)
+  #   end
   end
   pod_install(bundle_command)
 end
