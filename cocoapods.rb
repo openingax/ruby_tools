@@ -32,6 +32,7 @@ def pod_install(bundle_command)
     stdout, stderr, status = ShellUtils.execute(pod_install_repo_update_command)
     if status.to_i.zero?
       puts("#{pod_install_repo_update_command} 执行成功\n#{stdout}".green)
+      open_xcode_project
     else
       puts("Pod install 执行失败\n#{stdout}".red)
     end
