@@ -20,8 +20,19 @@ def open_xcode_project
 end
 
 def pod_install(bundle_command)
-  pod_install_command = "#{bundle_command}pod install"
-  pod_install_repo_update_command = "#{bundle_command}pod install --repo-update"
+
+  # arch_prefix = ''
+  # stdout, stderr, status = ShellUtils.execute('arch')
+  # if stdout.to_s == 'arm64'
+  #   puts("Apple M1 arm64 架构".blue)
+  #   arch_prefix = 'arch -x86_64 '
+  # else
+  #   puts("Intel X86 架构".blue)
+  #   arch_prefix = ''
+  # end
+
+  pod_install_command = "#{arch_prefix}#{bundle_command}pod install"
+  pod_install_repo_update_command = "#{arch_prefix}#{bundle_command}pod install --repo-update"
   puts("开始执行 #{pod_install_command}")
   stdout, stderr, status = ShellUtils.execute(pod_install_command)
   if status.to_i.zero?
@@ -49,18 +60,20 @@ def bundle_process
 
   if !File.exist?(gemfile_path)
     bundle_command = ''
-  # else
-  #   bundle_install_command = 'bundle install'
-  #   stdout, stderr, status = ShellUtils.execute(bundle_install_command)
-  #   unless status.to_i.zero?
-  #     puts("#{bundle_install_command} 执行失败\n#{stderr}".red)
-  #     # bundle install 失败的话，直接退出，手动处理报错
-  #     exit(status.zero?)
-  #   end
+  else
+    bundle_install_command = 'bundle install'
+    stdout, stderr, status = ShellUtils.execute(bundle_install_command)
+    unless status.to_i.zero?
+      puts("#{bundle_install_command} 执行失败\n#{stderr}".red)
+      # bundle install 失败的话，直接退出，手动处理报错
+      exit(status.zero?)
+    end
   end
   pod_install(bundle_command)
 end
 
 bundle_process
+
+pod_install('')
 
 
