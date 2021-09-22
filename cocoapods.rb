@@ -31,8 +31,8 @@ def pod_install(bundle_command)
   #   arch_prefix = ''
   # end
 
-  pod_install_command = "#{arch_prefix}#{bundle_command}pod install"
-  pod_install_repo_update_command = "#{arch_prefix}#{bundle_command}pod install --repo-update"
+  pod_install_command = "#{bundle_command}pod install"
+  pod_install_repo_update_command = "#{bundle_command}pod install --repo-update"
   puts("开始执行 #{pod_install_command}")
   stdout, stderr, status = ShellUtils.execute(pod_install_command)
   if status.to_i.zero?
@@ -73,7 +73,5 @@ def bundle_process
 end
 
 bundle_process
-
-pod_install('')
 
 
