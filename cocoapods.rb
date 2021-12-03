@@ -21,16 +21,6 @@ end
 
 def pod_install(bundle_command)
 
-  # arch_prefix = ''
-  # stdout, stderr, status = ShellUtils.execute('arch')
-  # if stdout.to_s == 'arm64'
-  #   puts("Apple M1 arm64 架构".blue)
-  #   arch_prefix = 'arch -x86_64 '
-  # else
-  #   puts("Intel X86 架构".blue)
-  #   arch_prefix = ''
-  # end
-
   pod_install_command = "#{bundle_command}pod install"
   pod_install_repo_update_command = "#{bundle_command}pod install --repo-update"
   puts("开始执行 #{pod_install_command}")
@@ -38,6 +28,11 @@ def pod_install(bundle_command)
   if status.to_i.zero?
     puts("#{pod_install_command} 执行成功".green)
     open_xcode_project
+  elsif stdout.include?('`Pods/Local Podspecs`')
+    `rm -rf "#{Dir.pwd}/Pods/Local\ Podspecs"`
+    # 切换 RN 版本后，需要运行两次 pod install 来解决 yoga 无法找到的问题
+    pod_install(bundle_command)
+    pod_install(bundle_command)
   elsif stdout.include?('could not find') || stdout.include?('Unable to find')
     puts("开始执行 #{pod_install_repo_update_command}")
     stdout, stderr, status = ShellUtils.execute(pod_install_repo_update_command)
